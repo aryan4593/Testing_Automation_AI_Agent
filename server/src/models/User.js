@@ -25,7 +25,24 @@ const userSchema = new mongoose.Schema(
             type:Number,
             required: true,
             default:5000
-        }
+        },
+        githubConnected: {
+            type: Boolean,
+            default: false,
+        },
+        githubAccessToken: {
+            type: String,
+            default: null,
+        },
+
+        githubUsername: {
+            type: String,
+            default: null,
+        },
+        githubAvatar: {
+            type: String,
+            default: null,
+        },
     },
     { timestamps: true }
 );

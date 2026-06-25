@@ -1,8 +1,17 @@
 import React, { useContext } from "react";
 import { UserDetailsContext } from "../context/userDetailContext";
 
+import axios from "axios";
+import { useUser } from "@clerk/clerk-react";
+
 function WorkspaceBody() {
   const { userDetails } = useContext(UserDetailsContext);
+  const VITE_BACKEND_ROUTE = import.meta.env.VITE_BACKEND_ROUTE;
+  const { user } = useUser();
+
+  const OnAddRepo = () => {
+      window.location.href =`${VITE_BACKEND_ROUTE}/github/login?clerkId=${user.id}`;
+  };
 
   return (
     <>
@@ -29,9 +38,22 @@ function WorkspaceBody() {
           </h2>
         </div>
 
-        <button className="bg-black hover:bg-gray-900 text-white font-semibold px-8 py-3 rounded-xl transition">
-          + Add
-        </button>
+        {
+            !userDetails?.githubConnected ? (
+                <button
+                    onClick={OnAddRepo}
+                    className="bg-black text-white px-8 py-3 rounded-xl"
+                >
+                    Setup
+                </button>
+            ) : (
+                <button
+                    className="bg-green-500 text-white px-8 py-3 rounded-xl"
+                >
+                    +Add Repo
+                </button>
+            )
+        }
       </div>
     </>
   );
