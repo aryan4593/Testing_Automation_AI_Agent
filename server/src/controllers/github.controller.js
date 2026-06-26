@@ -75,7 +75,7 @@ export const githubCallback = async (req, res) => {
                 },
             }
         );
-
+        // console.log(response.data);
         const accessToken = response.data.access_token;
 
         if (!accessToken) {
@@ -84,7 +84,7 @@ export const githubCallback = async (req, res) => {
             );
         }
 
-        console.log("GitHub Access Token:", accessToken);
+        // console.log("GitHub Access Token:", accessToken);
         
         const githubUser = await axios.get(
             "https://api.github.com/user",
@@ -116,3 +116,62 @@ export const githubCallback = async (req, res) => {
         );
     }
 };
+
+
+export const getGithubRepo = async (req, res) =>{
+    // console.log("repos requested");
+    try {
+        const { clerkId } = req.query;
+    
+        const user = await User.findOne({clerkId});
+    
+        if(!user){
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        if(!user.githubConnected){
+            return res.status(400).json({
+                message: "GitHub not connected",
+            });
+        }
+
+
+
+        const response = await axios.get(
+            "https://api.github.com/user/repos",
+            {
+                params: {
+                    sort: "updated",
+                    direction: "desc",
+                    per_page: 100,
+                },
+                headers: {
+                    Authorization: `Bearer ${user.githubAccessToken}`,
+                    Accept: "application/vnd.github+json", // res in json format
+                },
+            }
+        );
+
+        const repositories = response.data.map((repo) => ({
+            id: repo.id,
+            name: repo.name,
+            fullName: repo.full_name,
+            private: repo.private,
+            language: repo.language,
+            defaultBranch: repo.default_branch,
+            updatedAt: repo.updated_at,
+            htmlUrl: repo.html_url,
+        }));
+        // console.log(repositories);
+        return res.status(200).json(repositories);
+
+    } 
+    catch (error) {
+        // console.log(error);
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+}

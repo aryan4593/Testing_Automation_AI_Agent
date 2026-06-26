@@ -3,6 +3,7 @@ import { UserDetailsContext } from "../context/userDetailContext";
 
 import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
+import RepoDialog from "./RepoDialog";
 
 function WorkspaceBody() {
   const { userDetails } = useContext(UserDetailsContext);
@@ -47,11 +48,8 @@ function WorkspaceBody() {
                     Setup
                 </button>
             ) : (
-                <button
-                    className="bg-green-500 text-white px-8 py-3 rounded-xl"
-                >
-                    +Add Repo
-                </button>
+                <RepoDialog/>
+
             )
         }
       </div>
