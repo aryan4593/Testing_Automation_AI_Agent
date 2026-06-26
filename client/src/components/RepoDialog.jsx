@@ -13,10 +13,10 @@ import {
 import { getRepositories } from "@/services/githubService";
 import { useUser } from "@clerk/clerk-react";
 import { FolderGit2, Globe, Globe2Icon, Lock, Search } from "lucide-react";
-import { addProject } from "@/services/projectService";
+import { addProject, getProjects } from "@/services/projectService";
 
 function RepoDialog() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [repos,setRepos]  = React.useState([]);
   const [selectedRepo,setSelectedRepo]  = React.useState(null);
   const [search, setSearch] = useState("");
@@ -55,19 +55,19 @@ function RepoDialog() {
     }
 
   };
-  useEffect(() => {
-    if (!user) return;
 
-    const loadRepositories = async () => {
-      try {
-        const repos = await getRepositories(user.id);
-        setRepos(repos);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    loadRepositories();
-  }, [user]);
+  const loadProjects = async () => {
+      if (!user) return;
+
+      const data = await getRepositories(user.id);
+      setRepos(data);
+  };
+
+  useEffect(() => {
+        if (!isLoaded || !user) return;
+
+        loadProjects();
+  }, [isLoaded, user]);
 
 
   const filteredRepos = useMemo(() => {

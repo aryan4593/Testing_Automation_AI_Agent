@@ -38,7 +38,6 @@ export const createProject = async (req, res) => {
             owner: repo.owner,
         });
 
-        console.log("project created");
         return res.status(201).json(project);
     } 
     catch (err) {
@@ -48,4 +47,32 @@ export const createProject = async (req, res) => {
         });
     }
 
+}
+
+
+export const getProjects =async (req,res)=>{
+    try {
+        const { clerkId } = req.query;
+        // console.log("getproject", clerkId);
+        const user = await User.findOne({ clerkId });
+
+        if(!user){
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        const projects = await Project.find({
+            userId: user._id,
+        }).sort({ createdAt: -1 });
+
+        return res.status(200).json(projects);
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: err.message,
+        });
+
+    }
 }

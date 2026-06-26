@@ -13,3 +13,17 @@ export const addProject = async (clerkId, repo) => {
 
     return response.data;
 };
+
+export const getProjects = async (clerkId)=>{
+
+    const response = await axios.get(
+        `${BACKEND_ROUTE}/projects/`,
+       {
+            params: {
+                clerkId
+            }
+       }
+    ) 
+
+    return response.data;
+}
