@@ -55,7 +55,8 @@ const projectSchema = new mongoose.Schema(
 
     owner: {
       type: String,
-      required: false,
+      required: true,
+      default:null
     },
   },
   {

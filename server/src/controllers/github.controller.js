@@ -163,6 +163,7 @@ export const getGithubRepo = async (req, res) =>{
             defaultBranch: repo.default_branch,
             updatedAt: repo.updated_at,
             htmlUrl: repo.html_url,
+            owner: repo.owner.login,
         }));
         // console.log(repositories);
         return res.status(200).json(repositories);
