@@ -8,6 +8,7 @@ import {
   Settings,
   ListChecks,
 } from "lucide-react";
+import TestCaseSettingDialog from "./TestCaseSettingDialog";
 
 function TestCaseList({testCases = [],onReload,loading = false}) {
   const [selected, setSelected] = useState([]);
@@ -101,12 +102,7 @@ function TestCaseList({testCases = [],onReload,loading = false}) {
                 Pending
               </Badge>
 
-              <Button
-                size="icon"
-                variant="outline"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
+              <TestCaseSettingDialog testCase = {testCase}/>
 
             </div>
 

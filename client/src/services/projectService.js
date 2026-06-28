@@ -27,3 +27,12 @@ export const getProjects = async (clerkId)=>{
 
     return response.data;
 }
+
+export const updateProjectSettings = async (projectId, data) => {
+  const response = await axios.put(
+    `${BACKEND_ROUTE}/projects/${projectId}/settings`,
+    data
+  );
+
+  return response.data;
+};

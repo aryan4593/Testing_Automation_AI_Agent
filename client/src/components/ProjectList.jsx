@@ -5,7 +5,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
 import {
   FolderGit2,
   Globe2,
@@ -16,37 +15,39 @@ import {
   TrendingUp,
   Sparkles,
   Loader2Icon,
+  Link2Icon,
+  Settings2,
 } from "lucide-react";
 
-import { generateTestCases,getTestCases} from "@/services/aiService";
+import { generateTestCases, getTestCases } from "@/services/aiService";
 import TestCaseList from "./TestCaseList";
-
+import { Button } from "./ui/button";
+import RepoSettings from "./RepoSettings";
 
 function ProjectList({ projects }) {
   const [generatedTestCases, setGeneratedTestCases] = useState([]);
   const [openedProjectId, setOpenedProjectId] = useState(null);
   const [testCaseLoading, setTestCaseLoading] = useState(false);
-  const [statusData,setStatusData] = useState({
-    totalTests : 0,
+  const [statusData, setStatusData] = useState({
+    totalTests: 0,
     passed: 0,
     failed: 0,
-    passRate:0
-  })
+    passRate: 0,
+  });
   const handleGenerateTestCases = async (project) => {
     try {
       setTestCaseLoading(true);
 
       const result = await generateTestCases(project._id);
 
-
       setOpenedProjectId(project._id);
       setGeneratedTestCases(result.testCases || []);
       setStatusData({
         totalTests: result.testCases.length,
         passed: 0,
-        failed:0,
-        passRate:0
-      })
+        failed: 0,
+        passRate: 0,
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -65,23 +66,19 @@ function ProjectList({ projects }) {
       setStatusData({
         totalTests: response.testCases.length,
         passed: 0,
-        failed:0,
-        passRate:0
-      })
-    } 
-    catch (error) {
+        failed: 0,
+        passRate: 0,
+      });
+    } catch (error) {
       console.error(error);
-    } 
-    finally {
+    } finally {
       setTestCaseLoading(false);
     }
   };
 
   return (
     <div className="mt-10">
-      <h2 className="text-2xl font-bold mb-5">
-        Connected Repositories
-      </h2>
+      <h2 className="text-2xl font-bold mb-5">Connected Repositories</h2>
       <Accordion
         type="single"
         collapsible
@@ -101,24 +98,7 @@ function ProjectList({ projects }) {
           }
         }}
       >
-      {projects.map((project) => (
-        // <Accordion
-        //   key={project._id}
-        //   type="single"
-        //   collapsible
-        //   className="mb-5"
-
-        //   onValueChange={(value) => {
-        //     if (value) {
-        //       handleAccordionOpen(project._id);
-        //     }
-        //     else{
-        //       setGeneratedTestCases([]);
-        //       setOpenedProjectId(null);
-        //     }
-        //   }}
-
-        // >
+        {projects.map((project) => (
           <AccordionItem
             value={project._id}
             key={project._id}
@@ -131,9 +111,7 @@ function ProjectList({ projects }) {
                 </div>
 
                 <div className="text-left">
-                  <h2 className="text-lg font-semibold">
-                    {project.fullName}
-                  </h2>
+                  <h2 className="text-lg font-semibold">{project.fullName}</h2>
 
                   <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
                     <span>{project.defaultBranch}</span>
@@ -152,7 +130,18 @@ function ProjectList({ projects }) {
 
             <AccordionContent className="max-h-[70vh] overflow-y-auto">
               <div className="pt-2 pb-2 space-y-5">
+                <div className="bg-gray-50 p-3 border rounded-xl flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <Link2Icon className="text-primary h-5 w-5" />
 
+                    <h2 className="font-medium">Target Domain:</h2>
+
+                    <h2 className="bg-white p-1 px-2 border rounded-md text-primary font-medium">
+                      {project?.targetDomain || "Not Configured"}
+                    </h2>
+                  </div>
+                    <RepoSettings project={project}/>
+                </div>
                 {/* Description */}
                 <div>
                   <p className="text-gray-600">
@@ -195,9 +184,7 @@ function ProjectList({ projects }) {
                 {!testCaseLoading &&
                   openedProjectId === project._id &&
                   generatedTestCases.length === 0 && (
-
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between border rounded-xl p-5 bg-gray-50 gap-4">
-
                       <div>
                         <h3 className="font-semibold text-lg">
                           Generate AI Test Cases
@@ -217,10 +204,8 @@ function ProjectList({ projects }) {
                         <Sparkles className="h-4 w-4" />
                         Generate Test Cases
                       </button>
-
                     </div>
-                 )
-                }
+                  )}
 
                 {/* Loading */}
                 {testCaseLoading && (
@@ -244,18 +229,14 @@ function ProjectList({ projects }) {
                     No test cases generated yet.
                   </div>
                 )}
-
               </div>
             </AccordionContent>
           </AccordionItem>
-      ))}
-    </Accordion>
+        ))}
+      </Accordion>
     </div>
   );
 }
-
-
-
 
 function StatusCard({ title, value, icon, bgColor }) {
   return (
@@ -273,7 +254,5 @@ function StatusCard({ title, value, icon, bgColor }) {
     </div>
   );
 }
-
-
 
 export default ProjectList;

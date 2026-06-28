@@ -4,6 +4,7 @@ import userRoutes from "./src/routes/user.routes.js";
 import githubRoutes from "./src/routes/github.routes.js";
 import projectRoutes from "./src/routes/project.routes.js";
 import AIRoutes from "./src/routes/ai.routes.js";
+import testCaseRoute from "./src/routes/testcase.route.js";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/ai", AIRoutes);
+app.use("/api/testcases", testCaseRoute);
 
 app.get("/", (req, res) => {
     res.json({

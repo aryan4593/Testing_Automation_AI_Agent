@@ -28,3 +28,15 @@ export const saveTestCases = async ({project,testCases,}) => {
         return null;
     }
 };
+
+
+export const updateTestCase = async (testCaseId, updatedFields) => {
+  return await TestCase.findByIdAndUpdate(
+    testCaseId,
+    updatedFields,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+};

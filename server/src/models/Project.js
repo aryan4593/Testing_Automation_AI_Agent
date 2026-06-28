@@ -58,6 +58,19 @@ const projectSchema = new mongoose.Schema(
       required: true,
       default:null
     },
+      // Repository Configuration
+    targetDomain: {
+      type: String,
+      default: "",
+      // trim: true,
+    },
+
+    globalTestInstructions: {
+      type: String,
+      default: "",
+      // trim: true,
+    },
+
   },
   {
     timestamps: true,

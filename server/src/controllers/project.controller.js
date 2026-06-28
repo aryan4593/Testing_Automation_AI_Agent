@@ -76,3 +76,46 @@ export const getProjects =async (req,res)=>{
 
     }
 }
+
+
+export const updateProjectSettings = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const {
+      targetDomain,
+      globalTestInstructions,
+    } = req.body;
+
+    const project = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        targetDomain,
+        globalTestInstructions,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Project settings updated successfully.",
+      project,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
