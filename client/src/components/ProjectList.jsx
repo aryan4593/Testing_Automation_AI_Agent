@@ -24,6 +24,40 @@ import TestCaseList from "./TestCaseList";
 import { Button } from "./ui/button";
 import RepoSettings from "./RepoSettings";
 
+const normalizeTestStatus = (status) => {
+  const value = typeof status === "string" ? status.trim().toLowerCase() : "";
+
+  if (["passed", "success", "succeeded", "completed"].includes(value)) return "passed";
+  if (["failed", "error", "errored", "exception"].includes(value)) return "failed";
+  if (["running", "inprogress", "in-progress", "processing"].includes(value)) return "running";
+  if (["generating"].includes(value)) return "generating";
+
+  return "pending";
+};
+
+const summarizeTestStatuses = (testCases = []) => {
+  const totalTests = testCases.length;
+  let passed = 0;
+  let failed = 0;
+
+  testCases.forEach((testCase) => {
+    const normalizedStatus = normalizeTestStatus(testCase?.status);
+
+    if (normalizedStatus === "passed") {
+      passed += 1;
+    } else if (normalizedStatus === "failed") {
+      failed += 1;
+    }
+  });
+
+  return {
+    totalTests,
+    passed,
+    failed,
+    passRate: totalTests === 0 ? 0 : Math.round((passed / totalTests) * 100),
+  };
+};
+
 function ProjectList({ projects }) {
   const [generatedTestCases, setGeneratedTestCases] = useState([]);
   const [openedProjectId, setOpenedProjectId] = useState(null);
@@ -42,12 +76,7 @@ function ProjectList({ projects }) {
 
       setOpenedProjectId(project._id);
       setGeneratedTestCases(result.testCases || []);
-      setStatusData({
-        totalTests: result.testCases.length,
-        passed: 0,
-        failed: 0,
-        passRate: 0,
-      });
+      setStatusData(summarizeTestStatuses(result.testCases || []));
     } catch (error) {
       console.error(error);
     } finally {
@@ -63,12 +92,7 @@ function ProjectList({ projects }) {
       const response = await getTestCases(projectId);
       setOpenedProjectId(projectId);
       setGeneratedTestCases(response.testCases || []);
-      setStatusData({
-        totalTests: response.testCases.length,
-        passed: 0,
-        failed: 0,
-        passRate: 0,
-      });
+      setStatusData(summarizeTestStatuses(response.testCases || []));
     } catch (error) {
       console.error(error);
     } finally {
@@ -218,6 +242,7 @@ function ProjectList({ projects }) {
                 {/* Generated Test Cases */}
                 {!testCaseLoading && generatedTestCases.length > 0 && (
                   <TestCaseList
+                    project={project}
                     testCases={generatedTestCases}
                     onReload={() => handleAccordionOpen(project._id)}
                   />

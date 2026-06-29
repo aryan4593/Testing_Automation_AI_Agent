@@ -9,10 +9,40 @@ import {
   ListChecks,
 } from "lucide-react";
 import TestCaseSettingDialog from "./TestCaseSettingDialog";
+import RunTestDialog from "./RunTestDialog";
 
-function TestCaseList({testCases = [],onReload,loading = false}) {
+const normalizeTestStatus = (status) => {
+  const value = typeof status === "string" ? status.trim().toLowerCase() : "";
+
+  if (["passed", "success", "succeeded", "completed"].includes(value)) return "passed";
+  if (["failed", "error", "errored", "exception"].includes(value)) return "failed";
+  if (["running", "inprogress", "in-progress", "processing"].includes(value)) return "running";
+  if (["generating"].includes(value)) return "generating";
+
+  return "pending";
+};
+
+const getStatusBadge = (status) => {
+  const normalizedStatus = normalizeTestStatus(status);
+
+  switch (normalizedStatus) {
+    case "passed":
+      return <Badge className="bg-green-100 text-green-800">Passed</Badge>;
+    case "failed":
+      return <Badge className="bg-red-100 text-red-800">Failed</Badge>;
+    case "running":
+      return <Badge className="bg-amber-100 text-amber-800">Running</Badge>;
+    case "generating":
+      return <Badge className="bg-blue-100 text-blue-800">Generating</Badge>;
+    default:
+      return <Badge variant="secondary">Pending</Badge>;
+  }
+};
+
+function TestCaseList({project,testCases = [],onReload,loading = false}) {
   const [selected, setSelected] = useState([]);
-  console.log(selected);
+  const [runDialogOpen, setRunDialogOpen] = useState(false);
+  // console.log(selected);
   const toggleSelection = (testCase) => {
     setSelected((prev) =>
       prev.includes(testCase)
@@ -98,9 +128,7 @@ function TestCaseList({testCases = [],onReload,loading = false}) {
                 {testCase.type}
               </Badge>
 
-              <Badge variant="secondary">
-                Pending
-              </Badge>
+              {getStatusBadge(testCase.status)}
 
               <TestCaseSettingDialog testCase = {testCase}/>
 
@@ -119,6 +147,8 @@ function TestCaseList({testCases = [],onReload,loading = false}) {
           <Button
             disabled={selected.length === 0}
             className="gap-2"
+            onClick={() => setRunDialogOpen(true)}
+
           >
             <Play className="h-4 w-4" />
             Run Selected
@@ -127,7 +157,13 @@ function TestCaseList({testCases = [],onReload,loading = false}) {
         </div>
 
       </div>
-
+        <RunTestDialog
+            open={runDialogOpen}
+            onClose={() => setRunDialogOpen(false)}
+            onReload={onReload}
+            project={project}
+            testCases={selected}
+        />
     </div>
   );
 }

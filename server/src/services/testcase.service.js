@@ -40,3 +40,7 @@ export const updateTestCase = async (testCaseId, updatedFields) => {
     }
   );
 };
+
+export const getTestCaseById = async (testCaseId)=>{
+  return await TestCase.findById(testCaseId);j
+}

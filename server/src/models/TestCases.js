@@ -82,17 +82,56 @@ const testCaseSchema = new mongoose.Schema(
             default: "",
         },
 
+        logs: [
+            {
+                type: {
+                type: String,
+                enum: [
+                    "log",
+                    "info",
+                    "warning",
+                    "error",
+                    "network",
+                    "pageerror",
+                    "exception",
+                ],
+                default: "log",
+                },
+
+                text: {
+                type: String,
+                default: "",
+                },
+
+                timestamp: {
+                type: Date,
+                default: Date.now,
+                },
+            },
+        ],
+
+        sessionId: {
+            type: String,
+            default: "",
+        },
+
+        sessionUrl: {
+            type: String,
+            default: "",
+        },
+
         // Execution
         status: {
             type: String,
             enum: [
-                "generated",
-                "running",
-                "passed",
-                "failed",
+                "Pending",
+                "Generating",
+                "Running",
+                "Passed",
+                "Failed",
             ],
-            default: "generated",
-        },
+            default: "Pending",
+        }
     },
     {
         timestamps: true,
