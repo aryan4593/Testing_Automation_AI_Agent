@@ -68,6 +68,10 @@ export const runTestCase = async (req, res) => {
       baseUrl: project.targetDomain,
     });
 
+    if (!script || typeof script !== "string") {
+      throw new Error("Automation script generation returned an invalid result.");
+    }
+
     const startedAt = Date.now();
 
     await updateTestCase(testCase._id, {

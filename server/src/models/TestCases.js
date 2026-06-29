@@ -129,6 +129,7 @@ const testCaseSchema = new mongoose.Schema(
                 "Running",
                 "Passed",
                 "Failed",
+                "generated",
             ],
             default: "Pending",
         }

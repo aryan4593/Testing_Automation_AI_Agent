@@ -36,8 +36,8 @@ export const generateTestCasesController = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Test cases generated successfully.",
-            count: savedTestCases.length,
-            testCases: savedTestCases,
+            count: Array.isArray(savedTestCases) ? savedTestCases.length : 0,
+            testCases: Array.isArray(savedTestCases) ? savedTestCases : [],
         });
 
     } 
